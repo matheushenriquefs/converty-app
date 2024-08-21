@@ -1,66 +1,73 @@
-# Shadcn Admin Dashboard
+# Converty APP
 
-Admin Dashboard UI crafted with Shadcn and Vite. Built with responsiveness and accessibility in mind.
-
-![alt text](public/images/shadcn-admin.png)
-
-I've been creating dashboard UIs at work and for my personal projects. I always wanted to make a reusable collection of dashboard UI for future projects; and here it is now. While I've created a few custom components, some of the code is directly adapted from ShadcnUI examples.
-
-> This is not a starter project (template) though. I'll probably make one in the future.
+Converty APP is a tool designed to streamline the conversion of Minha CDN log files into the Agora format with ease. By connecting to the Converty API, it provides an intuitive interface for users to perform conversions efficiently.
 
 ## Features
 
-- Light/dark mode
-- Responsive
-- Accessible
-- Sidebar and header layouts
-- 10+ pages
-- Extra custom components
+The app includes the following key features:
 
-## Tech Stack
+- **Dashboard Overview**: The homepage displays system-wide statistics, including the total number of logs received in the Minha CDN format and the total number of conversions performed.
+- **Log Conversion Page**: Users can easily convert log files from the Minha CDN format to the Agora format. This page provides:
+An input field for the URL of the Minha CDN log.
+A display area to show the received log.
+A section to view the converted log in Agora format.
+An option to download the converted log as a .txt file.
 
-**UI:** [ShadcnUI](https://ui.shadcn.com) (TailwindCSS + RadixUI)
 
-**Build Tool:** [Vite](https://vitejs.dev/)
+## Techs
 
-**Routing:** [React Router](https://reactrouter.com/en/main)
+- [React](https://react.dev) - Frontend framework
+- [Firebase](https://firebase.google.com) - Managed infrastructure
+- [Typescript](https://www.typescriptlang.org) - Typed JavaScript for better development experience
+- [Vite](https://vitejs.dev) - Frontend tooling
+- [ESLint](https://eslint.org) - Code quality and formatting
+- [Docker](https://www.docker.com) - Containerization for consistent environments
 
-**Type Checking:** [TypeScript](https://www.typescriptlang.org/)
+### Prerequisites
 
-**Linting/Formatting:** [Eslint](https://eslint.org/) & [Prettier](https://prettier.io/)
+Make sure you have the following dependencies installed on your system:
 
-**Icons:** [Tabler Icons](https://tabler.io/icons)
-
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/satnaing/shadcn-admin.git
+```sh
+Docker >= 23.0.5
+Docker Compose >= 2.17.3
 ```
 
-Go to the project directory
+## Project Setup
 
-```bash
-  cd shadcn-admin
+1. Clone this repository.
+2. Copy the `.env.example` file to `.env`
+
+```sh
+cp .env.example .env
 ```
 
-Install dependencies
+## Running The Application
 
-```bash
-  pnpm install
+Start the development server using Docker Compose.
+
+```sh
+docker compose up
 ```
 
-Start the server
+The application will be running in development mode by default. Open your [browser](http://localhost:5173) to see it.
 
-```bash
-  pnpm run dev
+## Testing The Application
+
+Use the following credentials when prompted:
+
+```sh
+email: admin@itaas.com
+password: brBKX8K5v2Qh1Ar
 ```
 
-## Author
+### Type-Check, Compile and Minify for Production
 
-Crafted with 🤍 by [@satnaing](https://github.com/satnaing)
+To prepare the project for production, run:
 
-## License
+```sh
+docker exec -it converty-app npm run build
+```
 
-Licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
+## Demo
+
+![Converty APP demo](demo/demo.gif)
