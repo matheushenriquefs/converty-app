@@ -1,10 +1,13 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, Navigate } from 'react-router-dom'
 import Sidebar from './sidebar'
 import useIsCollapsed from '@/hooks/use-is-collapsed'
 
 export default function AppShell() {
   const [isCollapsed, setIsCollapsed] = useIsCollapsed()
-  return (
+  const serialized = sessionStorage.getItem('firebase:authUser')
+  const user = serialized ? JSON.parse(serialized) : null
+
+  return user ? (
     <div className='relative h-full overflow-hidden bg-background'>
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main
@@ -14,5 +17,7 @@ export default function AppShell() {
         <Outlet />
       </main>
     </div>
+  ) : (
+    <Navigate to='/sign-in' replace />
   )
 }
