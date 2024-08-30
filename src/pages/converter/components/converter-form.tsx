@@ -1,11 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm, useWatch, type FieldError } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  type DocumentData,
-  type QueryDocumentSnapshot,
-} from 'firebase/firestore'
 import { useQuery } from '@tanstack/react-query'
 
 import {
@@ -74,16 +70,6 @@ const getLogService = async (url: string, field: FieldState) => {
 
 const getConversionService = new GetConversionService()
 
-const validateConversionFile = async (
-  snapshot: QueryDocumentSnapshot<DocumentData, DocumentData> | null | undefined
-) => {
-  if (!snapshot) {
-    return null
-  }
-
-  return await getConversionFileService.handle(snapshot)
-}
-
 export default function ConverterForm() {
   const [convertedLog, setConvertedLog] = useState({
     filename: '',
@@ -99,49 +85,52 @@ export default function ConverterForm() {
     defaultValue: defaultValues.sourceUrl,
     control: form.control,
   })
-  const conversionPayload = { sourceUrl: sourceUrlFieldValue }
   const sourceUrlState = form.getFieldState('sourceUrl')
 
-  const { data: log } = useQuery({
+  useQuery({
     queryKey: ['log', sourceUrlFieldValue, sourceUrlState],
-    queryFn: () => getLogService(sourceUrlFieldValue, sourceUrlState),
-  })
-  const { data: conversion } = useQuery({
-    queryKey: ['conversion', sourceUrlFieldValue, conversionPayload],
-    queryFn: () =>
-      getConversionService.handle(sourceUrlFieldValue, conversionPayload),
-  })
-  const { data: convertedLogFile } = useQuery({
-    queryKey: ['convertedLogFile', conversion],
-    queryFn: () => validateConversionFile(conversion),
-  })
+    queryFn: async () => {
+      const log = await getLogService(sourceUrlFieldValue, sourceUrlState)
 
-  useEffect(() => {
-    if (!log) {
-      return
-    }
-    toast({
-      title: 'Conversão iniciada',
-    })
-    form.setValue('log', log)
-  }, [log, form])
+      if (!log) {
+        return false
+      }
 
-  useEffect(() => {
-    if (!convertedLogFile) {
-      return
-    }
-
-    setTimeout(() => {
       toast({
-        title: 'Conversão finalizada',
+        title: 'Conversão iniciada',
       })
-    }, 1000)
-    convertedLogFile.text().then((text) => form.setValue('convertedLog', text))
-    setConvertedLog({
-      filename: convertedLogFile.name,
-      href: URL.createObjectURL(convertedLogFile),
-    })
-  }, [convertedLogFile, form])
+      form.setValue('log', log)
+      const conversionPayload = { sourceUrl: sourceUrlFieldValue }
+      const conversion = await getConversionService.handle(
+        sourceUrlFieldValue,
+        conversionPayload
+      )
+
+      if (!conversion) {
+        return false
+      }
+
+      const convertedFile = await getConversionFileService.handle(conversion)
+
+      if (!convertedFile) {
+        return false
+      }
+
+      const convertedLog = await convertedFile.text()
+
+      if (!convertedLog) {
+        return false
+      }
+
+      form.setValue('convertedLog', convertedLog)
+      setConvertedLog({
+        filename: convertedFile.name,
+        href: URL.createObjectURL(convertedFile),
+      })
+
+      return true
+    },
+  })
 
   return (
     <Form {...form}>
