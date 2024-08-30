@@ -8,16 +8,22 @@ import ThemeSwitch from '@/components/theme-switch'
 import { UserNav } from '@/components/user-nav'
 import { FirebaseClient } from '@/clients/firebase'
 
+type Snapshot = {
+  data: () => {
+    count: number
+  }
+}
+
 const firebaseClient = new FirebaseClient()
 
 export default function Dashboard() {
   const [snapshot, setSnapshot] = useState({
-    count: '',
+    count: 0,
   })
 
   useEffect(() => {
     const coll = collection(firebaseClient.getDb(), 'conversions')
-    getCountFromServer(coll).then((snapshot: any) => {
+    getCountFromServer(coll).then((snapshot: Snapshot) => {
       setSnapshot(snapshot.data())
     })
   }, [])
