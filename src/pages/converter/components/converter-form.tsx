@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { useForm, useWatch, type FieldError } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
-import { useDebounce } from "@uidotdev/usehooks";
+import { useDebounce } from '@uidotdev/usehooks'
 
 import {
   Form,
@@ -87,13 +87,16 @@ export default function ConverterForm() {
     control: form.control,
   })
   const sourceUrlState = form.getFieldState('sourceUrl')
-  const debouncedSourceUrlFieldValue = useDebounce(sourceUrlFieldValue, 333);
-  const debouncedSourceUrlState = useDebounce(sourceUrlState, 333);
+  const debouncedSourceUrlFieldValue = useDebounce(sourceUrlFieldValue, 333)
+  const debouncedSourceUrlState = useDebounce(sourceUrlState, 333)
 
   useQuery({
     queryKey: ['log', debouncedSourceUrlFieldValue, debouncedSourceUrlState],
     queryFn: async () => {
-      const log = await getLogService(debouncedSourceUrlFieldValue, debouncedSourceUrlState)
+      const log = await getLogService(
+        debouncedSourceUrlFieldValue,
+        debouncedSourceUrlState
+      )
 
       if (!log) {
         return false
@@ -123,12 +126,15 @@ export default function ConverterForm() {
 
       if (!convertedLog) {
         return false
-      }      
+      }
 
       form.setValue('convertedLog', convertedLog)
       setConvertedLog({
         filename: convertedFile.name,
         href: URL.createObjectURL(convertedFile),
+      })
+      toast({
+        title: 'Conversão finalizada',
       })
 
       return true
