@@ -1,7 +1,6 @@
 version: '3.8'
 services:
   converty-app:
-    platform: linux/amd64
     build: .
     image: converty-app
     container_name: converty-app
