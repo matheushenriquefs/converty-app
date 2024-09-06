@@ -1,13 +1,46 @@
-import { Outlet, Navigate } from 'react-router-dom'
-import Sidebar from './sidebar'
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { onAuthStateChanged } from 'firebase/auth'
+
+import Sidebar from '@/components/sidebar'
+import Loader from '@/components/loader'
+import { FirebaseClient } from '@/clients/firebase'
 import useIsCollapsed from '@/hooks/use-is-collapsed'
+
+const client = new FirebaseClient()
+let isInitialized = false
 
 export default function AppShell() {
   const [isCollapsed, setIsCollapsed] = useIsCollapsed()
-  const serialized = sessionStorage.getItem('firebase:authUser')
-  const user = serialized ? JSON.parse(serialized) : null
+  const navigate = useNavigate()
 
-  return user ? (
+  useEffect(() => {
+    if (!isInitialized) {
+      onAuthStateChanged(client.getAuth(), (user) => {
+        if (!user) {
+          navigate('/sign-in')
+
+          return
+        }
+
+        navigate('/')
+
+        return
+      })
+
+      isInitialized = true
+    }
+  }, [navigate])
+
+  if (!isInitialized) {
+    return (
+      <div className='relative h-full overflow-hidden bg-background'>
+        <Loader />
+      </div>
+    )
+  }
+
+  return (
     <div className='relative h-full overflow-hidden bg-background'>
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main
@@ -17,7 +50,5 @@ export default function AppShell() {
         <Outlet />
       </main>
     </div>
-  ) : (
-    <Navigate to='/sign-in' replace />
   )
 }
