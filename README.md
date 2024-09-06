@@ -8,11 +8,10 @@ The app includes the following key features:
 
 - **Dashboard Overview**: The homepage displays system-wide statistics, including the total number of logs received in the Minha CDN format and the total number of conversions performed.
 - **Log Conversion Page**: Users can easily convert log files from the Minha CDN format to the Agora format. This page provides:
-An input field for the URL of the Minha CDN log.
-A display area to show the received log.
-A section to view the converted log in Agora format.
-An option to download the converted log as a .txt file.
-
+  An input field for the URL of the Minha CDN log.
+  A display area to show the received log.
+  A section to view the converted log in Agora format.
+  An option to download the converted log as a .txt file.
 
 ## Techs
 
